@@ -1,10 +1,13 @@
 import os
 import random
+
 import praw
 from aiogram import Bot, Dispatcher, types
 import asyncio
 from PIL import Image, ImageDraw, ImageFont
 import asyncio
+
+from aiogram.filters import Command
 
 # Настройки API
 API_TOKEN = "7826898830:AAFsuB8JkLGRONunmNLN1_aIM6WBApZyBNM"
@@ -22,7 +25,8 @@ reddit = praw.Reddit(client_id=REDDIT_CLIENT_ID,
 
 
 # Команда для отправки мемов из Reddit
-@dp.message_handler(commands=['meme'])
+dp = Dispatcher()
+@dp.message(Command("meme"))
 async def send_meme(message: types.Message):
     subreddit = reddit.subreddit("memes")
     posts = [post for post in subreddit.hot(limit=50)]
@@ -35,7 +39,7 @@ async def send_meme(message: types.Message):
 
 
 # Команда для отправки локальных мемов
-@dp.message_handler(commands=['local_meme'])
+@dp.message(Command("local_meme"))
 async def send_local_meme(message: types.Message):
     meme_folder = "memes/"
     meme_files = os.listdir(meme_folder)
@@ -73,7 +77,7 @@ def generate_meme(text_top, text_bottom):
 
 
 # Команда для генерации мемов
-@dp.message_handler(commands=['generate_meme'])
+@dp.message(Command("generate_meme"))
 async def create_meme(message: types.Message):
     # Пример текста для мема
     text_top = "Верхний текст"
@@ -89,5 +93,5 @@ async def create_meme(message: types.Message):
 async def main():
     await dp.start_polling(bot)
 
-if name == "main":
+if 'name' == "main":
     asyncio.run(main())
